@@ -16,12 +16,14 @@ func main() {
 	fmt.Print("Happy Coding")
 	l := log.New(os.Stdout, "Product-api", log.LstdFlags)
 
-	hh := handlers.NewHello(l)
-	gh := handlers.NewGoodbye(l)
+	// hh := handlers.NewHello(l)
+	// gh := handlers.NewGoodbye(l)
+
+	gp := handlers.Products(l)
 
 	sm := http.NewServeMux()
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gh)
+	sm.Handle("/", gp)
+	// sm.Handle("/goodbye", gh)
 
 	s := &http.Server{
 		Addr:         ":8808",
