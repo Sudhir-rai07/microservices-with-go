@@ -1,9 +1,12 @@
 package data
 
 import (
+	"encoding/json"
+	"io"
 	"time"
 )
 
+// Product defined structure of product API
 type Product struct {
 	ID          int     `json:"id"`
 	Name        string  `json:"name"`
@@ -15,7 +18,9 @@ type Product struct {
 	DeletedAt   string  `josn:"deletedAt"`
 }
 
-var productList = []*Product{
+type Products []*Product
+
+var productList = Products{
 	&Product{
 		ID:          1,
 		Name:        "Latte",
@@ -36,6 +41,31 @@ var productList = []*Product{
 	},
 }
 
-func GetProducts() []*Product {
+// Gets all products
+func GetProducts() Products {
 	return productList
+}
+
+// Adds a new Product to productList
+func AddProduct(p *Product) {
+	p.ID = genID()
+	productList = append(productList, p)
+}
+
+// genID generates id for the next product
+func genID() int {
+	lp := productList[len(productList)-1]
+	return lp.ID + 1
+}
+
+// Converts the ProductList to JSON
+func (p *Products) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(p)
+}
+
+// Converts to struct from JSON
+func (p *Product) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(p)
 }
