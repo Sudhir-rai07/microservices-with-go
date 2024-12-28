@@ -1,3 +1,5 @@
 module github.com/Sudhir-rai07/microservices-with-go
 
 go 1.23.4
+
+require github.com/gorilla/mux v1.8.1 // indirect

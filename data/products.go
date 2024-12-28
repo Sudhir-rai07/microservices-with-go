@@ -41,31 +41,11 @@ var productList = Products{
 	},
 }
 
-// Gets all products
 func GetProducts() Products {
 	return productList
 }
 
-// Adds a new Product to productList
-func AddProduct(p *Product) {
-	p.ID = genID()
-	productList = append(productList, p)
-}
-
-// genID generates id for the next product
-func genID() int {
-	lp := productList[len(productList)-1]
-	return lp.ID + 1
-}
-
-// Converts the ProductList to JSON
-func (p *Products) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
+func (p *Products) ToJSON(rw io.Writer) error {
+	e := json.NewEncoder(rw)
 	return e.Encode(p)
-}
-
-// Converts to struct from JSON
-func (p *Product) FromJSON(r io.Reader) error {
-	e := json.NewDecoder(r)
-	return e.Decode(p)
 }
