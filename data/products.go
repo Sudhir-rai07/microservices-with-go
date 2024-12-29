@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"time"
 )
@@ -20,7 +21,7 @@ type Product struct {
 
 type Products []*Product
 
-var productList = Products{
+var ProductList = Products{
 	&Product{
 		ID:          1,
 		Name:        "Latte",
@@ -41,11 +42,54 @@ var productList = Products{
 	},
 }
 
+// Returns all products
 func GetProducts() Products {
-	return productList
+	return ProductList
 }
 
+// Marshels struct data to JSON
 func (p *Products) ToJSON(rw io.Writer) error {
 	e := json.NewEncoder(rw)
 	return e.Encode(p)
+}
+
+// Returns id for new Product ::: Can be done by math/rand stl lib
+func genNextID() int {
+	lp := ProductList[len(ProductList)-1]
+	return lp.ID + 1
+}
+
+// Marshels JSON to struct
+func (p *Product) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(p)
+}
+
+// Adds a new product to Product slice
+func AddProduct(p Product) {
+	p.ID = genNextID()
+	ProductList = append(ProductList, &p)
+}
+
+// Get product by id
+func GetProduct(id int) (*Product, error) {
+	for _, item := range ProductList {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+
+	return nil, errors.New("Can not find product")
+}
+
+// Delete Product by id
+func DeleteProduct(id int) error {
+	for idx, prod := range ProductList {
+		if prod.ID == id {
+			ProductList = append(ProductList[:idx], ProductList[idx+1:]...)
+			return nil
+		}
+	}
+
+	return errors.New("Cannot find product")
 }
