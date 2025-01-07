@@ -5,18 +5,20 @@ import (
 	"errors"
 	"io"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Product defined structure of product API
 type Product struct {
 	ID          int     `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float32 `json:"price"`
+	Name        string  `json:"name" validate:"required"`
+	Description string  `json:"description" validate:"required"`
+	Price       float32 `json:"price" validate:"gt=0"`
 	SKU         string  `json:"sku"`
-	CreatedAt   string  `josn:"createdAt"`
-	UpdatedAt   string  `josn:"updatedAt"`
-	DeletedAt   string  `josn:"deletedAt"`
+	CreatedAt   string  `josn:"_"`
+	UpdatedAt   string  `josn:"_"`
+	DeletedAt   string  `josn:"_"`
 }
 
 type Products []*Product
@@ -40,6 +42,12 @@ var ProductList = Products{
 		CreatedAt:   time.Now().UTC().String(),
 		UpdatedAt:   time.Now().String(),
 	},
+}
+
+// Validate incoming data
+func (p *Product) Validate() error {
+	validate := validator.New()
+	return validate.Struct(p)
 }
 
 // Returns all products

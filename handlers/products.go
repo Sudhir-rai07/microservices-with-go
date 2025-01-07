@@ -45,6 +45,11 @@ func (p *Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Faild to unmarshal ", http.StatusBadRequest)
 	}
 
+	err = prod.Validate()
+	if err != nil {
+		http.Error(rw, "Faild to Validate incoming json data ", http.StatusBadRequest)
+		return
+	}
 	data.AddProduct(prod)
 }
 
