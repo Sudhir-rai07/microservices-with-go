@@ -9,25 +9,20 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/Sudhir-rai07/microservices-with-go/db"
 	"github.com/Sudhir-rai07/microservices-with-go/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
 
-	l := log.New(os.Stdout, "Products-api", log.LstdFlags)
+	// Init db
+	db := db.InitDB()
 
-	// Mux router
-	// github.com/gorilla/mux
+	h := handlers.NewDB(db)
 	r := mux.NewRouter()
 
-	handleProducts := handlers.HandleProducts(l) // Product handler
-
-	r.HandleFunc("/", handleProducts.GetProducts).Methods(http.MethodGet)          // Get Products
-	r.HandleFunc("/", handleProducts.AddProduct).Methods(http.MethodPost)          // Add New Product
-	r.HandleFunc("/{id}", handleProducts.GetProduct).Methods(http.MethodGet)       // GEt Product by ID
-	r.HandleFunc("/{id}", handleProducts.UpdateProduct).Methods(http.MethodPut)    // Update a product by ID
-	r.HandleFunc("/{id}", handleProducts.DeleteProduct).Methods(http.MethodDelete) // Delete a product by ID
+	r.HandleFunc("/createuser", h.CreateUser).Methods(http.MethodPost)
 
 	// Server setup
 	s := &http.Server{
